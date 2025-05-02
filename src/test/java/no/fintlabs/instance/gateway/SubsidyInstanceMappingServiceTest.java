@@ -2,7 +2,6 @@ package no.fintlabs.instance.gateway;
 
 import no.fintlabs.gateway.instance.model.File;
 import no.fintlabs.gateway.instance.model.instance.InstanceObject;
-import no.fintlabs.gateway.instance.web.FileClient;
 import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class SubsidyInstanceMappingServiceTest {
 
     @Mock
-    private FileClient fileClient;
+    Function<File, Mono<UUID>> persistFile;
 
     private SubsidyInstanceMappingService service;
     private SubsidyInstance subsidyInstance;
@@ -29,7 +29,7 @@ class SubsidyInstanceMappingServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new SubsidyInstanceMappingService(fileClient);
+        service = new SubsidyInstanceMappingService();
 
         subsidyInstance = SubsidyInstance.builder()
                 .integrationId("FRIP")
@@ -41,7 +41,7 @@ class SubsidyInstanceMappingServiceTest {
                                 "format", "text/plain",
                                 "filnavn", "fil.txt",
                                 "data", "BASE64_STRING"
-                )))
+                        )))
                 .groups(
                         Map.of("hoveddokument",
                                 Map.of(
@@ -55,7 +55,7 @@ class SubsidyInstanceMappingServiceTest {
                                 )
                         ))
                 .collections(
-                        Map.of("vedlegg", List.of (
+                        Map.of("vedlegg", List.of(
                                 Map.of(
                                         "mediatype", "text/plain",
                                         "filnavn", "vedlegg1.txt",
@@ -73,9 +73,9 @@ class SubsidyInstanceMappingServiceTest {
     @Test
     void shouldReturnValidInstanceObject() {
 
-        when(fileClient.postFile(any(File.class))).thenReturn(Mono.just(UUID.randomUUID()));
+        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.randomUUID()));
 
-        InstanceObject result = service.map(0L, subsidyInstance).block();
+        InstanceObject result = service.map(0L, subsidyInstance, persistFile).block();
 
         assertEquals("99", result.getValuePerKey().get("kulturminneId"));
         assertEquals("55", result.getValuePerKey().get("saksnummer"));
@@ -87,9 +87,9 @@ class SubsidyInstanceMappingServiceTest {
     void shouldConvertFileContentToUuidOnField() {
         String hoveddokumentUuid = UUID.randomUUID().toString();
 
-        when(fileClient.postFile(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
+        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
 
-        InstanceObject instanceObject = service.map(0L, subsidyInstance).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
 
         assertEquals(hoveddokumentUuid, instanceObject.getValuePerKey().get("fil1Data"));
         assertEquals("fil.txt", instanceObject.getValuePerKey().get("fil1Filnavn"));
@@ -100,9 +100,9 @@ class SubsidyInstanceMappingServiceTest {
     void shouldConvertFileContentToUuidOnGroups() {
         String hoveddokumentUuid = UUID.randomUUID().toString();
 
-        when(fileClient.postFile(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
+        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
 
-        InstanceObject instanceObject = service.map(0L, subsidyInstance).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
 
         assertEquals(hoveddokumentUuid, instanceObject.getValuePerKey().get("hoveddokumentFil2Data"));
         assertEquals("fil.txt", instanceObject.getValuePerKey().get("hoveddokumentFil2Filnavn"));
@@ -113,12 +113,12 @@ class SubsidyInstanceMappingServiceTest {
     void shouldConvertFileContentToUuidOnCollections() {
         String vedleggUuid = UUID.randomUUID().toString();
 
-        when(fileClient.postFile(any(File.class))).thenReturn(Mono.just(UUID.fromString(vedleggUuid)));
+        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(vedleggUuid)));
 
-        InstanceObject instanceObject = service.map(0L, subsidyInstance).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
 
         Map<String, String> vedlegg = instanceObject.getObjectCollectionPerKey().get("vedlegg").stream()
-                                        .findFirst().get().getValuePerKey();
+                .findFirst().get().getValuePerKey();
 
         assertEquals(vedleggUuid, vedlegg.get("fil3Data"));
         assertEquals("fil.txt", vedlegg.get("fil3Filnavn"));
