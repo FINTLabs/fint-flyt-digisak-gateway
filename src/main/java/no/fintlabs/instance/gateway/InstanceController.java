@@ -5,7 +5,7 @@ import no.fintlabs.gateway.instance.InstanceProcessor;
 import no.fintlabs.gateway.instance.kafka.ArchiveCaseIdRequestService;
 import no.fintlabs.instance.gateway.model.Status;
 import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
-import no.fintlabs.resourceserver.security.client.sourceapplication.SourceApplicationAuthorizationUtil;
+import no.fintlabs.resourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,11 +21,16 @@ public class InstanceController {
 
     private final InstanceProcessor<SubsidyInstance> subsidyInstanceProcessor;
     private final ArchiveCaseIdRequestService archiveCaseIdRequestService;
+    private final SourceApplicationAuthorizationService sourceApplicationAuthorizationService;
 
-    public InstanceController(InstanceProcessor<SubsidyInstance> subsidyInstanceInstanceProcessor,
-                              ArchiveCaseIdRequestService archiveCaseIdRequestService) {
+    public InstanceController(
+            InstanceProcessor<SubsidyInstance> subsidyInstanceInstanceProcessor,
+            ArchiveCaseIdRequestService archiveCaseIdRequestService,
+            SourceApplicationAuthorizationService sourceApplicationAuthorizationService
+    ) {
         this.subsidyInstanceProcessor = subsidyInstanceInstanceProcessor;
         this.archiveCaseIdRequestService = archiveCaseIdRequestService;
+        this.sourceApplicationAuthorizationService = sourceApplicationAuthorizationService;
     }
 
     @PostMapping("instance")
@@ -48,7 +53,7 @@ public class InstanceController {
             @PathVariable String instanceId) {
 
         return authenticationMono.map(authentication -> {
-            Long sourceApplicationId = SourceApplicationAuthorizationUtil.getSourceApplicationId(authentication);
+            Long sourceApplicationId = sourceApplicationAuthorizationService.getSourceApplicationId(authentication);
             log.debug("Trying to get the latest status for instance {} (sourceApplication {})", instanceId, sourceApplicationId);
 
             return archiveCaseIdRequestService.getArchiveCaseId(sourceApplicationId, instanceId)
@@ -58,7 +63,7 @@ public class InstanceController {
                             .status("Instans godtatt av destinasjon").build())
                     ).orElse(ResponseEntity.badRequest().body(Status.builder()
                             .instanceId(instanceId)
-                                    .status("Ukjent status").build())
+                            .status("Ukjent status").build())
                     );
         });
     }

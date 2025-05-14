@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
 import no.fintlabs.discovery.gateway.model.digisak.SubsidyFieldDefinition;
 import no.fintlabs.discovery.gateway.model.fint.*;
+import no.fintlabs.resourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,14 +29,16 @@ import static no.fintlabs.resourceserver.UrlPaths.EXTERNAL_API;
 public class DigisakIntegrationMetadataController {
 
     private final IntegrationMetadataProducerService integrationMetadataProducerService;
-    private final SourceApplicationAuthorizationUtil sourceApplicationAuthorizationUtil;
+    private final SourceApplicationAuthorizationService sourceApplicationAuthorizationService;
     private final DigisakSubsidyDefinitionValidator digisakSubsidyDefinitionValidator;
 
-    public DigisakIntegrationMetadataController(IntegrationMetadataProducerService integrationMetadataProducerService,
-                                                SourceApplicationAuthorizationUtil sourceApplicationAuthorizationUtil,
-                                                DigisakSubsidyDefinitionValidator digisakSubsidyDefinitionValidator) {
+    public DigisakIntegrationMetadataController(
+            IntegrationMetadataProducerService integrationMetadataProducerService,
+            SourceApplicationAuthorizationService sourceApplicationAuthorizationService,
+            DigisakSubsidyDefinitionValidator digisakSubsidyDefinitionValidator
+    ) {
         this.integrationMetadataProducerService = integrationMetadataProducerService;
-        this.sourceApplicationAuthorizationUtil = sourceApplicationAuthorizationUtil;
+        this.sourceApplicationAuthorizationService = sourceApplicationAuthorizationService;
         this.digisakSubsidyDefinitionValidator = digisakSubsidyDefinitionValidator;
     }
 
@@ -60,7 +63,7 @@ public class DigisakIntegrationMetadataController {
         );
 
         IntegrationMetadata integrationMetadata = IntegrationMetadata.builder()
-                .sourceApplicationId(sourceApplicationAuthorizationUtil.getSourceApplicationId(authentication))
+                .sourceApplicationId(sourceApplicationAuthorizationService.getSourceApplicationId(authentication))
                 .sourceApplicationIntegrationId(subsidyDefinition.getIntegrationId())
                 .integrationDisplayName(subsidyDefinition.getIntegrationDisplayName())
                 .version(subsidyDefinition.getVersion())
