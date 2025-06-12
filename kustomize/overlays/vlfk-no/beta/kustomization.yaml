@@ -5,9 +5,10 @@ namespace: vlfk-no
 resources:
   - ../../../base
 
-commonLabels:
-  app.kubernetes.io/instance: fint-flyt-digisak-gateway_vlfk-no
-  fintlabs.no/org-id: vlfk.no
+labels:
+  - pairs:
+      app.kubernetes.io/instance: fint-flyt-digisak-gateway_vlfk-no
+      fintlabs.no/org-id: vlfk.no
 
 patches:
   - patch: |-
@@ -23,6 +24,9 @@ patches:
       - op: replace
         path: "/spec/ingress/basePath"
         value: "/beta/vlfk-no/api/digisak"
+      - op: replace
+        path: "/spec/probes/readiness/path"
+        value: "/beta/vlfk-no/actuator/health"
     target:
       kind: Application
       name: fint-flyt-digisak-gateway
