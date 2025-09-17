@@ -46,7 +46,7 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
 
     implementation 'no.fintlabs:fint-flyt-instance-gateway:6.0.5'
-    implementation 'no.fintlabs:fint-flyt-resource-server:5.1.0'
+    implementation 'no.fintlabs:fint-flyt-resource-server:5.1.1'
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
