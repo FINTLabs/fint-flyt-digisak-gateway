@@ -61,6 +61,11 @@ jobs:
         run: |
           echo "name=$(cut -d\- -f2 <<< ${{ matrix.cluster }})" >> $GITHUB_OUTPUT
 
+      - name: Set image
+        working-directory: kustomize/base
+        run: |
+          kustomize edit set image ghcr.io/${{ github.repository }}=ghcr.io/${{ github.repository }}:${{ needs.build-and-publish.outputs.image }}
+
       - name: Bake manifests with Kustomize
         id: bake
         uses: azure/k8s-bake@v4
