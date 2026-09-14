@@ -68,6 +68,13 @@ jobs:
           renderEngine: 'kustomize'
           kustomizationPath: 'kustomize/overlays/${{ matrix.org }}/${{ steps.environment.outputs.name }}'
 
+      - name: Apply image to Kubernetes manifests
+        id: substitute
+        uses: azure/k8s-artifact-substitute@v2
+        with:
+          images: ${{ needs.build-and-publish.outputs.tags }}
+          manifests: ${{ steps.manifest.outputs.manifestsBundle }}
+
       - name: Login to Azure
         uses: azure/login@v3
         with:
@@ -92,6 +99,6 @@ jobs:
         uses: azure/k8s-deploy@v7
         with:
           action: deploy
-          manifests: ${{ steps.bake.outputs.manifestsBundle }}
+          manifests: ${{ steps.substitute.outputs.manifests }}
           images: ${{ needs.build-and-publish.outputs.tags }}
           namespace: ${{ matrix.org }}
