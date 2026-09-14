@@ -63,7 +63,7 @@ jobs:
 
       - name: Bake manifests with Kustomize
         id: bake
-        uses: azure/k8s-bake@v3
+        uses: azure/k8s-bake@v4
         with:
           renderEngine: 'kustomize'
           kustomizationPath: 'kustomize/overlays/${{ matrix.org }}/${{ steps.environment.outputs.name }}'
@@ -89,7 +89,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) || matrix.deploy-every-branch == true
-        uses: azure/k8s-deploy@v5.0.3
+        uses: azure/k8s-deploy@v7
         with:
           action: deploy
           manifests: ${{ steps.bake.outputs.manifestsBundle }}
