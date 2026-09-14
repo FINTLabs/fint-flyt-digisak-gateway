@@ -61,19 +61,17 @@ jobs:
         run: |
           echo "name=$(cut -d\- -f2 <<< ${{ matrix.cluster }})" >> $GITHUB_OUTPUT
 
+      - name: Set image
+        working-directory: kustomize/base
+        run: |
+          kustomize edit set image ghcr.io/${{ github.repository }}=ghcr.io/${{ github.repository }}:${{ needs.build-and-publish.outputs.image }}
+
       - name: Bake manifests with Kustomize
         id: bake
         uses: azure/k8s-bake@v4
         with:
           renderEngine: 'kustomize'
           kustomizationPath: 'kustomize/overlays/${{ matrix.org }}/${{ steps.environment.outputs.name }}'
-
-      - name: Apply image to Kubernetes manifests
-        id: substitute
-        uses: azure/k8s-artifact-substitute@v2
-        with:
-          images: ${{ needs.build-and-publish.outputs.tags }}
-          manifests: ${{ steps.bake.outputs.manifestsBundle }}
 
       - name: Login to Azure
         uses: azure/login@v3
@@ -99,6 +97,6 @@ jobs:
         uses: azure/k8s-deploy@v7
         with:
           action: deploy
-          manifests: ${{ steps.substitute.outputs.manifests }}
+          manifests: ${{ steps.bake.outputs.manifestsBundle }}
           images: ${{ needs.build-and-publish.outputs.tags }}
           namespace: ${{ matrix.org }}
