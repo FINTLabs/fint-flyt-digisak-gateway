@@ -1,9 +1,9 @@
-FROM gradle:8.14.5-jdk17 AS builder
+FROM gradle:9.8.0-jdk25 AS builder
 USER root
 COPY . .
 RUN gradle --no-daemon build
 
-FROM gcr.io/distroless/java17
+FROM gcr.io/distroless/java25:nonroot
 ENV JAVA_TOOL_OPTIONS=-XX:+ExitOnOutOfMemoryError
 COPY --from=builder /home/gradle/build/libs/fint-flyt-digisak-gateway*.jar /data/app.jar
 CMD ["/data/app.jar"]

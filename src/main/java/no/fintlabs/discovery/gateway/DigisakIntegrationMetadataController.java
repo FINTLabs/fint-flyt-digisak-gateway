@@ -3,138 +3,117 @@ package no.fintlabs.discovery.gateway;
 import lombok.extern.slf4j.Slf4j;
 import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
 import no.fintlabs.discovery.gateway.model.digisak.SubsidyFieldDefinition;
-import no.fintlabs.discovery.gateway.model.fint.*;
-import no.fintlabs.resourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;
-import org.springframework.http.HttpStatus;
+import no.novari.flyt.gateway.metadata.IntegrationMetadataProcessor;
+import no.novari.flyt.gateway.metadata.IntegrationMetadataValidator;
+import no.novari.flyt.gateway.metadata.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.fintlabs.resourceserver.UrlPaths.EXTERNAL_API;
+import static no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API;
 
 @Slf4j
 @RestController
 @RequestMapping(EXTERNAL_API + "/digisak/metadata")
 public class DigisakIntegrationMetadataController {
 
-    private final IntegrationMetadataProducerService integrationMetadataProducerService;
-    private final SourceApplicationAuthorizationService sourceApplicationAuthorizationService;
-    private final DigisakSubsidyDefinitionValidator digisakSubsidyDefinitionValidator;
+    private final IntegrationMetadataProcessor integrationMetadataProcessor;
+    private final IntegrationMetadataValidator<SubsidyDefinition> digisakSubsidyDefinitionValidator;
 
     public DigisakIntegrationMetadataController(
-            IntegrationMetadataProducerService integrationMetadataProducerService,
-            SourceApplicationAuthorizationService sourceApplicationAuthorizationService,
-            DigisakSubsidyDefinitionValidator digisakSubsidyDefinitionValidator
+            IntegrationMetadataProcessor integrationMetadataProcessor,
+            IntegrationMetadataValidator<SubsidyDefinition> digisakSubsidyDefinitionValidator
     ) {
-        this.integrationMetadataProducerService = integrationMetadataProducerService;
-        this.sourceApplicationAuthorizationService = sourceApplicationAuthorizationService;
+        this.integrationMetadataProcessor = integrationMetadataProcessor;
         this.digisakSubsidyDefinitionValidator = digisakSubsidyDefinitionValidator;
     }
 
     @PostMapping()
-    public Mono<ResponseEntity<?>> postIntegrationMetadata(
+    public ResponseEntity<Void> postIntegrationMetadata(
             @RequestBody SubsidyDefinition subsidyDefinition,
-            @AuthenticationPrincipal Mono<Authentication> authenticationMono
-            ) {
-
-        return authenticationMono.map(authentication -> processIntegrationMetadata(subsidyDefinition, authentication));
+            Authentication authentication
+    ) {
+        return integrationMetadataProcessor.processIntegrationMetadata(
+                authentication,
+                subsidyDefinition,
+                DigisakIntegrationMetadataController::toIntegrationMetadata,
+                digisakSubsidyDefinitionValidator
+        );
     }
 
-    protected ResponseEntity<?> processIntegrationMetadata(SubsidyDefinition subsidyDefinition, Authentication authentication) {
-
-        digisakSubsidyDefinitionValidator.validate(subsidyDefinition).ifPresent(
-                (List<String> validationErrors) -> {
-                    throw new ResponseStatusException(
-                            HttpStatus.UNPROCESSABLE_ENTITY, "Validation error(s): "
-                            + validationErrors.stream().map(error -> "'" + error + "'").toList()
-                    );
-                }
+    private static IntegrationMetadata toIntegrationMetadata(long sourceApplicationId, SubsidyDefinition subsidyDefinition) {
+        return new IntegrationMetadata(
+                sourceApplicationId,
+                subsidyDefinition.getIntegrationId(),
+                null,
+                subsidyDefinition.getIntegrationDisplayName(),
+                subsidyDefinition.getVersion(),
+                new InstanceMetadataContent(
+                        getInstanceValueMetadata(subsidyDefinition),
+                        getInstanceObjectCollectionMetadata(subsidyDefinition),
+                        getInstanceMetadataCategories(subsidyDefinition)
+                )
         );
-
-        IntegrationMetadata integrationMetadata = IntegrationMetadata.builder()
-                .sourceApplicationId(sourceApplicationAuthorizationService.getSourceApplicationId(authentication))
-                .sourceApplicationIntegrationId(subsidyDefinition.getIntegrationId())
-                .integrationDisplayName(subsidyDefinition.getIntegrationDisplayName())
-                .version(subsidyDefinition.getVersion())
-                .instanceMetadata(InstanceMetadataContent.builder()
-                        .instanceValueMetadata(getInstanceValueMetadata(subsidyDefinition))
-                        .categories(getInstanceMetadataCategories(subsidyDefinition))
-                        .instanceObjectCollectionMetadata(getInstanceObjectCollectionMetadata(subsidyDefinition))
-                        .build())
-                .build();
-
-        integrationMetadataProducerService.publishNewIntegrationMetadata(integrationMetadata);
-        return ResponseEntity.accepted().build();
     }
 
     private static List<InstanceValueMetadata> getInstanceValueMetadata(SubsidyDefinition subsidyDefinition) {
         return subsidyDefinition.getFieldDefinitions().stream()
-                .map(subsidyField -> InstanceValueMetadata.builder()
-                        .key(subsidyField.getId())
-                        .displayName(subsidyField.getDisplayName())
-                        .type(getType(subsidyField)).build())
+                .map(subsidyField -> new InstanceValueMetadata(
+                        subsidyField.getDisplayName(),
+                        getType(subsidyField),
+                        subsidyField.getId()))
                 .collect(Collectors.toList());
     }
 
     private static List<InstanceMetadataCategory> getInstanceMetadataCategories(SubsidyDefinition subsidyDefinition) {
         return subsidyDefinition.getGroupDefinitions().stream()
-                .map(subsidyGroupDefinition -> InstanceMetadataCategory.builder()
-                        .displayName(subsidyGroupDefinition.getDisplayName())
-                        .content(InstanceMetadataContent.builder()
-                                .instanceValueMetadata(
-                                        subsidyGroupDefinition.getFieldDefinitions().stream()
-                                                .flatMap(subsidyField ->
-                                                        toInstanceValueMetadata(subsidyGroupDefinition.getId().concat(StringUtils.capitalize(subsidyField.getId())), subsidyField))
-                                                .collect(Collectors.toList()))
-                                .build())
-                        .build())
+                .map(subsidyGroupDefinition -> new InstanceMetadataCategory(
+                        subsidyGroupDefinition.getDisplayName(),
+                        new InstanceMetadataContent(
+                                subsidyGroupDefinition.getFieldDefinitions().stream()
+                                        .flatMap(subsidyField ->
+                                                toInstanceValueMetadata(subsidyGroupDefinition.getId().concat(StringUtils.capitalize(subsidyField.getId())), subsidyField))
+                                        .collect(Collectors.toList()),
+                                List.of(),
+                                List.of()
+                        )))
                 .collect(Collectors.toList());
     }
 
     private static List<InstanceObjectCollectionMetadata> getInstanceObjectCollectionMetadata(SubsidyDefinition subsidyDefinition) {
         return subsidyDefinition.getCollectionDefinitions().stream()
-                .map(subsidyCollectionDefinition -> InstanceObjectCollectionMetadata.builder()
-                        .key(subsidyCollectionDefinition.getId())
-                        .displayName(subsidyCollectionDefinition.getDisplayName())
-                        .objectMetadata(InstanceMetadataContent.builder()
-                                .instanceValueMetadata(
-                                        subsidyCollectionDefinition.getFieldDefinitions().stream()
-                                                .flatMap(subsidyField -> toInstanceValueMetadata(subsidyField.getId(), subsidyField))
-                                                .collect(Collectors.toList()))
-                                .build())
-                        .build())
+                .map(subsidyCollectionDefinition -> new InstanceObjectCollectionMetadata(
+                        subsidyCollectionDefinition.getDisplayName(),
+                        new InstanceMetadataContent(
+                                subsidyCollectionDefinition.getFieldDefinitions().stream()
+                                        .flatMap(subsidyField -> toInstanceValueMetadata(subsidyField.getId(), subsidyField))
+                                        .collect(Collectors.toList()),
+                                List.of(),
+                                List.of()
+                        ),
+                        subsidyCollectionDefinition.getId()))
                 .collect(Collectors.toList());
     }
 
     private static Stream<InstanceValueMetadata> toInstanceValueMetadata(String keyPrefix, SubsidyFieldDefinition subsidyField) {
-        if (InstanceValueMetadata.Type.FILE.equals(getType(subsidyField))){
+        if (InstanceValueMetadata.Type.FILE.equals(getType(subsidyField))) {
             return Stream.of(
-                    toInstanceValueMetadata(keyPrefix.concat("Data"), "Fil", InstanceValueMetadata.Type.FILE),
-                    toInstanceValueMetadata(keyPrefix.concat("Format"),"Format", InstanceValueMetadata.Type.STRING),
-                    toInstanceValueMetadata(keyPrefix.concat("Filnavn"),"Filnavn", InstanceValueMetadata.Type.STRING)
+                    new InstanceValueMetadata("Fil", InstanceValueMetadata.Type.FILE, keyPrefix.concat("Data")),
+                    new InstanceValueMetadata("Format", InstanceValueMetadata.Type.STRING, keyPrefix.concat("Format")),
+                    new InstanceValueMetadata("Filnavn", InstanceValueMetadata.Type.STRING, keyPrefix.concat("Filnavn"))
             );
         } else {
             return Stream.of(
-                    toInstanceValueMetadata(keyPrefix, subsidyField.getDisplayName(), getType(subsidyField)));
+                    new InstanceValueMetadata(subsidyField.getDisplayName(), getType(subsidyField), keyPrefix));
         }
-    }
-
-    private static InstanceValueMetadata toInstanceValueMetadata(String key, String displayName, InstanceValueMetadata.Type type) {
-        return InstanceValueMetadata.builder()
-                .key(key)
-                .displayName(displayName)
-                .type(type).build();
     }
 
     private static InstanceValueMetadata.Type getType(SubsidyFieldDefinition subsidyField) {

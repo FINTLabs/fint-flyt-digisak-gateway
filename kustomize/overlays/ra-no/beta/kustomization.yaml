@@ -19,6 +19,11 @@ patches:
         path: "/spec/orgId"
         value: "ra.no"
       - op: add
+        path: "/spec/env/-"
+        value:
+          name: novari.kafka.topic.org-id
+          value: "ra-no"
+      - op: add
         path: "/spec/url/basePath"
         value: "/beta/ra-no"
       - op: replace

@@ -1,11 +1,11 @@
 package no.fintlabs.instance.gateway.model.digisak;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 

@@ -1,34 +1,25 @@
 package no.fintlabs.instance.gateway;
 
-import no.fintlabs.gateway.instance.model.File;
-import no.fintlabs.gateway.instance.model.instance.InstanceObject;
+import kotlin.jvm.functions.Function1;
 import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
+import no.novari.flyt.gateway.instance.model.File;
+import no.novari.flyt.gateway.instance.model.instance.InstanceObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 class SubsidyInstanceMappingServiceTest {
-
-    @Mock
-    Function<File, Mono<UUID>> persistFile;
 
     private SubsidyInstanceMappingService service;
     private SubsidyInstance subsidyInstance;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         service = new SubsidyInstanceMappingService();
 
         subsidyInstance = SubsidyInstance.builder()
@@ -72,10 +63,9 @@ class SubsidyInstanceMappingServiceTest {
 
     @Test
     void shouldReturnValidInstanceObject() {
+        Function1<? super File, UUID> persistFile = file -> UUID.randomUUID();
 
-        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.randomUUID()));
-
-        InstanceObject result = service.map(0L, subsidyInstance, persistFile).block();
+        InstanceObject result = service.map(0L, subsidyInstance, persistFile);
 
         assertEquals("99", result.getValuePerKey().get("kulturminneId"));
         assertEquals("55", result.getValuePerKey().get("saksnummer"));
@@ -86,10 +76,9 @@ class SubsidyInstanceMappingServiceTest {
     @Test
     void shouldConvertFileContentToUuidOnField() {
         String hoveddokumentUuid = UUID.randomUUID().toString();
+        Function1<? super File, UUID> persistFile = file -> UUID.fromString(hoveddokumentUuid);
 
-        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
-
-        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile);
 
         assertEquals(hoveddokumentUuid, instanceObject.getValuePerKey().get("fil1Data"));
         assertEquals("fil.txt", instanceObject.getValuePerKey().get("fil1Filnavn"));
@@ -99,10 +88,9 @@ class SubsidyInstanceMappingServiceTest {
     @Test
     void shouldConvertFileContentToUuidOnGroups() {
         String hoveddokumentUuid = UUID.randomUUID().toString();
+        Function1<? super File, UUID> persistFile = file -> UUID.fromString(hoveddokumentUuid);
 
-        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(hoveddokumentUuid)));
-
-        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile);
 
         assertEquals(hoveddokumentUuid, instanceObject.getValuePerKey().get("hoveddokumentFil2Data"));
         assertEquals("fil.txt", instanceObject.getValuePerKey().get("hoveddokumentFil2Filnavn"));
@@ -112,10 +100,9 @@ class SubsidyInstanceMappingServiceTest {
     @Test
     void shouldConvertFileContentToUuidOnCollections() {
         String vedleggUuid = UUID.randomUUID().toString();
+        Function1<? super File, UUID> persistFile = file -> UUID.fromString(vedleggUuid);
 
-        when(persistFile.apply(any(File.class))).thenReturn(Mono.just(UUID.fromString(vedleggUuid)));
-
-        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile).block();
+        InstanceObject instanceObject = service.map(0L, subsidyInstance, persistFile);
 
         Map<String, String> vedlegg = instanceObject.getObjectCollectionPerKey().get("vedlegg").stream()
                 .findFirst().get().getValuePerKey();
