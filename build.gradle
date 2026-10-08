@@ -42,6 +42,7 @@ dependencies {
     implementation 'no.novari:flyt-gateway-starter:4.2.0'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
+    runtimeOnly 'org.aspectj:aspectjweaver'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
