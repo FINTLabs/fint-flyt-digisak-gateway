@@ -6,5 +6,6 @@ Its primary function is to handle POST requests containing data, which is then p
 microservices through Kafka inside the FINT Flyt infrastructure. Enjoy!
 
 ## Getting Started
-Feel free to read our original self help book in the template repo;
-https://github.com/FINTLabs/fint-flyt-instance-gateway-template (or call a friend).
+Feel free to read our original self help book in the starter repo;
+[https://github.com/FINTLabs/fint-flyt-instance-gateway-template](https://github.com/FINTLabs/fint-flyt-gateway-starter)
+(or call a friend).
