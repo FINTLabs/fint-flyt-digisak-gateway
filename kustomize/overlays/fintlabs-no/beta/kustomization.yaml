@@ -19,8 +19,10 @@ patches:
         path: "/spec/orgId"
         value: "fintlabs.no"
       - op: add
-        path: "/spec/url/basePath"
-        value: "/beta/fintlabs-no"
+        path: "/spec/env/-"
+        value:
+          name: server.servlet.context-path
+          value: "/beta/fintlabs-no"
       - op: replace
         path: "/spec/ingress/basePath"
         value: "/beta/fintlabs-no/api/digisak"
