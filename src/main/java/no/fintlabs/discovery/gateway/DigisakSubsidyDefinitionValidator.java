@@ -7,7 +7,6 @@ import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
 import no.novari.flyt.gateway.metadata.IntegrationMetadataValidator;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +30,6 @@ public class DigisakSubsidyDefinitionValidator implements IntegrationMetadataVal
                 .sorted()
                 .collect(Collectors.toList());
 
-        return errors.isEmpty() ? Collections.emptyList() : errors;
+        return errors.isEmpty() ? null : errors;
     }
  }

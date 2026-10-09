@@ -5,6 +5,9 @@ server:
     include-message: always
   max-http-request-header-size: 40KB
 spring:
+  output:
+    ansi:
+      enabled: always
   profiles:
     include:
       - flyt-kafka
