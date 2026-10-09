@@ -7,6 +7,7 @@ import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
 import no.novari.flyt.gateway.instance.InstanceMapper;
 import no.novari.flyt.gateway.instance.model.File;
 import no.novari.flyt.gateway.instance.model.instance.InstanceObject;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,11 +18,12 @@ import java.util.*;
 @Slf4j
 public class SubsidyInstanceMappingService implements InstanceMapper<SubsidyInstance> {
 
+    @NotNull
     @Override
     public InstanceObject map(
             long sourceApplicationId,
             SubsidyInstance subsidyInstance,
-            Function1<? super File, UUID> persistFile
+            @NotNull Function1<? super File, UUID> persistFile
     ) {
         Map<String, String> valuePerKey = new HashMap<>();
         valuePerKey.putAll(fieldValueMapper(persistFile, subsidyInstance.getFields(), sourceApplicationId, subsidyInstance.getInstanceId()));
@@ -118,11 +120,11 @@ public class SubsidyInstanceMappingService implements InstanceMapper<SubsidyInst
     }
 
     private SubsidyDokumentfil toSubsidyDokumentfil(Object object) {
-        Map<String, String> subsidyDocumentfilMap = (Map<String, String>) object;
+        Map<?, ?> subsidyDocumentfilMap = (Map<?, ?>) object;
         return SubsidyDokumentfil.builder()
-                .filnavn(subsidyDocumentfilMap.get("filnavn"))
-                .format(MediaType.valueOf(subsidyDocumentfilMap.get("format")))
-                .data(subsidyDocumentfilMap.get("data"))
+                .filnavn((String) subsidyDocumentfilMap.get("filnavn"))
+                .format(MediaType.valueOf((String) subsidyDocumentfilMap.get("format")))
+                .data((String) subsidyDocumentfilMap.get("data"))
                 .build();
     }
 
