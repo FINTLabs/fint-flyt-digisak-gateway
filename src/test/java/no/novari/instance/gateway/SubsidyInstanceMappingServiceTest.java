@@ -1,7 +1,7 @@
-package no.fintlabs.instance.gateway;
+package no.novari.instance.gateway;
 
 import kotlin.jvm.functions.Function1;
-import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
+import no.novari.instance.gateway.model.digisak.SubsidyInstance;
 import no.novari.flyt.gateway.instance.model.File;
 import no.novari.flyt.gateway.instance.model.instance.InstanceObject;
 import org.junit.jupiter.api.BeforeEach;

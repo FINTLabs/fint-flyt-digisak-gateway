@@ -1,9 +1,9 @@
-package no.fintlabs.discovery.gateway;
+package no.novari.discovery.gateway;
 
 
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
+import no.novari.discovery.gateway.model.digisak.SubsidyDefinition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

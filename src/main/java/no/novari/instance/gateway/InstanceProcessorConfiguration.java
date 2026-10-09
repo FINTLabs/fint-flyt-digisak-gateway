@@ -1,6 +1,6 @@
-package no.fintlabs.instance.gateway;
+package no.novari.instance.gateway;
 
-import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
+import no.novari.instance.gateway.model.digisak.SubsidyInstance;
 import no.novari.flyt.gateway.instance.InstanceProcessor;
 import no.novari.flyt.gateway.instance.InstanceProcessorFactoryService;
 import org.springframework.context.annotation.Bean;

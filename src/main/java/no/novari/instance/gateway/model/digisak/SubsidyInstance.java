@@ -1,4 +1,4 @@
-package no.fintlabs.instance.gateway.model.digisak;
+package no.novari.instance.gateway.model.digisak;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

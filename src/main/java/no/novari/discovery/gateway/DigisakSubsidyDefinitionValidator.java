@@ -1,9 +1,9 @@
-package no.fintlabs.discovery.gateway;
+package no.novari.discovery.gateway;
 
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
-import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
+import no.novari.discovery.gateway.model.digisak.SubsidyDefinition;
 import no.novari.flyt.gateway.metadata.IntegrationMetadataValidator;
 import org.springframework.stereotype.Service;
 

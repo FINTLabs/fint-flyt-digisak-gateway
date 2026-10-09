@@ -1,8 +1,8 @@
-package no.fintlabs.discovery.gateway;
+package no.novari.discovery.gateway;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fintlabs.discovery.gateway.model.digisak.SubsidyDefinition;
-import no.fintlabs.discovery.gateway.model.digisak.SubsidyFieldDefinition;
+import no.novari.discovery.gateway.model.digisak.SubsidyDefinition;
+import no.novari.discovery.gateway.model.digisak.SubsidyFieldDefinition;
 import no.novari.flyt.gateway.metadata.IntegrationMetadataProcessor;
 import no.novari.flyt.gateway.metadata.IntegrationMetadataValidator;
 import no.novari.flyt.gateway.metadata.model.*;

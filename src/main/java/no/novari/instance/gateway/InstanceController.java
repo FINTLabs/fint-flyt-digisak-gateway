@@ -1,8 +1,8 @@
-package no.fintlabs.instance.gateway;
+package no.novari.instance.gateway;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fintlabs.instance.gateway.model.Status;
-import no.fintlabs.instance.gateway.model.digisak.SubsidyInstance;
+import no.novari.instance.gateway.model.Status;
+import no.novari.instance.gateway.model.digisak.SubsidyInstance;
 import no.novari.flyt.gateway.instance.InstanceProcessor;
 import no.novari.flyt.gateway.instance.kafka.ArchiveCaseIdRequestService;
 import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;

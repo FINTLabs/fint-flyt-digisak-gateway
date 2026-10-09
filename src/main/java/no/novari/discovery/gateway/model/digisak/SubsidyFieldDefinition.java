@@ -1,4 +1,4 @@
-package no.fintlabs.discovery.gateway.model.digisak;
+package no.novari.discovery.gateway.model.digisak;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
