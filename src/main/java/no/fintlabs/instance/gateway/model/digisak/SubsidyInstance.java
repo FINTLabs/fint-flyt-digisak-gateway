@@ -1,5 +1,6 @@
 package no.fintlabs.instance.gateway.model.digisak;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,9 +16,10 @@ import java.util.Map;
 @Builder
 public class SubsidyInstance {
 
-    @NotNull
+    @NotBlank
     private String integrationId;
 
+    @NotBlank
     private String instanceId;
 
     @NotNull
