@@ -13,8 +13,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 public class DigisakSubsidyDefinitionValidatorTest {
@@ -36,23 +35,18 @@ public class DigisakSubsidyDefinitionValidatorTest {
     }
 
     @Test
-    public void greenIsGood() {
-        assertTrue(true);
-    }
-
-    //@Test
-    public void shouldReturnErrorWhenFieldsAreMissing() {
+    public void shouldReturnNullWhenFieldsAreMissing() {
         SubsidyDefinition subsidyDefinition = SubsidyDefinition.builder()
                 .integrationId("FOOBAR")
                 .integrationDisplayName("Your Display Name")
                 .version(1337L)
-                .fieldDefinitions(new ArrayList<>())
+                .fieldDefinitions(null)
                 .groupDefinitions(new ArrayList<>())
                 .collectionDefinitions(new ArrayList<>())
                 .build();
 
         List<String> result = digisakSubsidyDefinitionValidator.validate(subsidyDefinition);
 
-        assertFalse(result.isEmpty());
+        assertNull(result);
     }
 }

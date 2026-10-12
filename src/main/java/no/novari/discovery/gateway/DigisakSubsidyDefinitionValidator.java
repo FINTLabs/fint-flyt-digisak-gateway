@@ -5,6 +5,7 @@ import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import no.novari.discovery.gateway.model.digisak.SubsidyDefinition;
 import no.novari.flyt.gateway.metadata.IntegrationMetadataValidator;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class DigisakSubsidyDefinitionValidator implements IntegrationMetadataVal
     }
 
     @Override
-    public List<String> validate(SubsidyDefinition subsidyDefinition) {
+    public List<String> validate(@NotNull SubsidyDefinition subsidyDefinition) {
         List<String> errors = validator.validate(subsidyDefinition)
                 .stream()
                 .map(constraintViolation ->
