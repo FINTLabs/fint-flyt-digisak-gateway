@@ -19,8 +19,15 @@ patches:
         path: "/spec/orgId"
         value: "vlfk.no"
       - op: add
-        path: "/spec/url/basePath"
-        value: "/beta/vlfk-no"
+        path: "/spec/env/-"
+        value:
+          name: novari.kafka.topic.org-id
+          value: "vlfk-no"
+      - op: add
+        path: "/spec/env/-"
+        value:
+          name: server.servlet.context-path
+          value: "/beta/vlfk-no"
       - op: replace
         path: "/spec/ingress/basePath"
         value: "/beta/vlfk-no/api/digisak"
