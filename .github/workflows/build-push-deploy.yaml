@@ -31,6 +31,7 @@ jobs:
       environment: beta
       org: ${{ matrix.org }}
       deploy-every-branch: true
+    secrets: inherit
 
 #  prod:
 #    needs: [ build-push, beta ]
@@ -42,3 +43,4 @@ jobs:
 #      tags: ${{ needs.build-push.outputs.tags }}
 #      environment: api
 #      org: ${{ matrix.org }}
+#    secrets: inherit
