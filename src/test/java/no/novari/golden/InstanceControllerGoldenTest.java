@@ -1,7 +1,7 @@
 package no.novari.golden;
 
+import no.novari.flyt.gateway.instance.HistoryClient;
 import no.novari.flyt.gateway.instance.InstanceProcessor;
-import no.novari.flyt.gateway.instance.kafka.ArchiveCaseIdRequestService;
 import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;
 import no.novari.instance.gateway.InstanceController;
 import no.novari.instance.gateway.model.digisak.SubsidyInstance;
@@ -24,7 +24,7 @@ class InstanceControllerGoldenTest {
 
     @SuppressWarnings("unchecked")
     private final InstanceProcessor<SubsidyInstance> instanceProcessor = mock(InstanceProcessor.class);
-    private final ArchiveCaseIdRequestService archiveCaseIdRequestService = mock(ArchiveCaseIdRequestService.class);
+    private final HistoryClient historyClient = mock(HistoryClient.class);
     private final SourceApplicationAuthorizationService sourceApplicationAuthorizationService =
             mock(SourceApplicationAuthorizationService.class);
     private final Authentication authentication = mock(Authentication.class);
@@ -34,12 +34,12 @@ class InstanceControllerGoldenTest {
     @BeforeEach
     void setUp() {
         when(sourceApplicationAuthorizationService.getSourceApplicationId(authentication)).thenReturn(SOURCE_APPLICATION_ID);
-        controller = new InstanceController(instanceProcessor, archiveCaseIdRequestService, sourceApplicationAuthorizationService);
+        controller = new InstanceController(instanceProcessor, historyClient, sourceApplicationAuthorizationService);
     }
 
     @Test
     void statusForArchivedInstance() throws Exception {
-        when(archiveCaseIdRequestService.getArchiveCaseId(SOURCE_APPLICATION_ID, "12345")).thenReturn("2026/42");
+        when(historyClient.getArchiveInstanceId(SOURCE_APPLICATION_ID, "12345")).thenReturn("2026/42");
 
         assertMatchesGolden("digisak-status-archived", toMap(controller.getInstanceStatus(authentication, "12345")));
     }
