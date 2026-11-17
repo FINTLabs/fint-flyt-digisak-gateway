@@ -14,3 +14,4 @@ spring:
       - flyt-logging
       - flyt-resource-server
       - flyt-file-client
+      - flyt-authorization-client
