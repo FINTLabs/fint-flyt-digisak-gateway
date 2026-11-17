@@ -1,0 +1,67 @@
+{
+  "instanceMetadata" : {
+    "categories" : [ {
+      "content" : {
+        "categories" : [ ],
+        "instanceObjectCollectionMetadata" : [ ],
+        "instanceValueMetadata" : [ {
+          "displayName" : "Tittel",
+          "key" : "hoveddokumentTittel",
+          "type" : "STRING"
+        }, {
+          "displayName" : "Fil",
+          "key" : "hoveddokumentFil2Data",
+          "type" : "FILE"
+        }, {
+          "displayName" : "Format",
+          "key" : "hoveddokumentFil2Format",
+          "type" : "STRING"
+        }, {
+          "displayName" : "Filnavn",
+          "key" : "hoveddokumentFil2Filnavn",
+          "type" : "STRING"
+        } ]
+      },
+      "displayName" : "Hoveddokument"
+    } ],
+    "instanceObjectCollectionMetadata" : [ {
+      "displayName" : "Vedlegg",
+      "key" : "vedlegg",
+      "objectMetadata" : {
+        "categories" : [ ],
+        "instanceObjectCollectionMetadata" : [ ],
+        "instanceValueMetadata" : [ {
+          "displayName" : "Filnavn",
+          "key" : "filnavn",
+          "type" : "STRING"
+        }, {
+          "displayName" : "Fil",
+          "key" : "fil3Data",
+          "type" : "FILE"
+        }, {
+          "displayName" : "Format",
+          "key" : "fil3Format",
+          "type" : "STRING"
+        }, {
+          "displayName" : "Filnavn",
+          "key" : "fil3Filnavn",
+          "type" : "STRING"
+        } ]
+      }
+    } ],
+    "instanceValueMetadata" : [ {
+      "displayName" : "Saksnummer",
+      "key" : "saksnummer",
+      "type" : "STRING"
+    }, {
+      "displayName" : "Søknad",
+      "key" : "fil1",
+      "type" : "FILE"
+    } ]
+  },
+  "integrationDisplayName" : "Fredete og verneverdige bygninger",
+  "sourceApplicationId" : 3,
+  "sourceApplicationIntegrationId" : "FRIP",
+  "sourceApplicationIntegrationUri" : null,
+  "version" : 4
+}

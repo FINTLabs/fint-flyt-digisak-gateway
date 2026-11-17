@@ -1,0 +1,8 @@
+{
+  "body" : {
+    "destinationId" : "2026/42",
+    "instanceId" : "12345",
+    "status" : "Instans godtatt av destinasjon"
+  },
+  "status" : 200
+}

@@ -1,0 +1,8 @@
+{
+  "body" : {
+    "destinationId" : null,
+    "instanceId" : "99999",
+    "status" : "Ukjent status"
+  },
+  "status" : 400
+}
