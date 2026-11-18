@@ -4,6 +4,6 @@ COPY . .
 RUN gradle --no-daemon build
 
 FROM gcr.io/distroless/java25:nonroot
-ENV JAVA_TOOL_OPTIONS=-XX:+ExitOnOutOfMemoryError
+ENV JAVA_TOOL_OPTIONS="-XX:+ExitOnOutOfMemoryError -XX:-UseBASE64Intrinsics"
 COPY --from=builder /home/gradle/build/libs/fint-flyt-digisak-gateway*.jar /data/app.jar
 CMD ["/data/app.jar"]
