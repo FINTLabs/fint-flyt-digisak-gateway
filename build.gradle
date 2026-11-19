@@ -39,7 +39,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'no.novari:flyt-gateway-starter:4.2.0'
+    implementation 'no.novari:flyt-gateway-starter:5.0.0'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     runtimeOnly 'org.aspectj:aspectjweaver'

@@ -4,3 +4,4 @@ resources:
   - flais.yaml
   - oauth2-file-client.yaml
   - oauth2-digisak-client.yaml
+  - oauth2-authorization-client.yaml
