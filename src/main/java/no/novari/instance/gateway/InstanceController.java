@@ -3,8 +3,8 @@ package no.novari.instance.gateway;
 import lombok.extern.slf4j.Slf4j;
 import no.novari.instance.gateway.model.Status;
 import no.novari.instance.gateway.model.digisak.SubsidyInstance;
+import no.novari.flyt.gateway.instance.HistoryClient;
 import no.novari.flyt.gateway.instance.InstanceProcessor;
-import no.novari.flyt.gateway.instance.kafka.ArchiveCaseIdRequestService;
 import no.novari.flyt.webresourceserver.security.client.sourceapplication.SourceApplicationAuthorizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,16 +18,16 @@ import static no.novari.flyt.webresourceserver.UrlPaths.EXTERNAL_API;
 public class InstanceController {
 
     private final InstanceProcessor<SubsidyInstance> subsidyInstanceProcessor;
-    private final ArchiveCaseIdRequestService archiveCaseIdRequestService;
+    private final HistoryClient historyClient;
     private final SourceApplicationAuthorizationService sourceApplicationAuthorizationService;
 
     public InstanceController(
             InstanceProcessor<SubsidyInstance> subsidyInstanceInstanceProcessor,
-            ArchiveCaseIdRequestService archiveCaseIdRequestService,
+            HistoryClient historyClient,
             SourceApplicationAuthorizationService sourceApplicationAuthorizationService
     ) {
         this.subsidyInstanceProcessor = subsidyInstanceInstanceProcessor;
-        this.archiveCaseIdRequestService = archiveCaseIdRequestService;
+        this.historyClient = historyClient;
         this.sourceApplicationAuthorizationService = sourceApplicationAuthorizationService;
     }
 
@@ -47,7 +47,7 @@ public class InstanceController {
         long sourceApplicationId = sourceApplicationAuthorizationService.getSourceApplicationId(authentication);
         log.debug("Trying to get the latest status for instance {} (sourceApplication {})", instanceId, sourceApplicationId);
 
-        String caseId = archiveCaseIdRequestService.getArchiveCaseId(sourceApplicationId, instanceId);
+        String caseId = historyClient.getArchiveInstanceId(sourceApplicationId, instanceId);
         if (caseId != null) {
             return ResponseEntity.ok(Status.builder()
                     .instanceId(instanceId)

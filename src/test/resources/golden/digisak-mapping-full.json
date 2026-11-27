@@ -1,0 +1,66 @@
+{
+  "instanceObject" : {
+    "objectCollectionPerKey" : {
+      "tomSamling" : [ ],
+      "vedlegg" : [ {
+        "objectCollectionPerKey" : { },
+        "valuePerKey" : {
+          "fil3Data" : "1d4ef8c6-9eb2-330b-8a32-f21b212f06ed",
+          "fil3Filnavn" : "vedlegg1.txt",
+          "fil3Format" : "text/plain",
+          "filnavn" : "vedlegg1.txt"
+        }
+      }, {
+        "objectCollectionPerKey" : { },
+        "valuePerKey" : {
+          "fil3Data" : "9c9715aa-d2bb-3346-bbac-304be02436ef",
+          "fil3Filnavn" : "vedlegg2.txt",
+          "fil3Format" : "text/plain",
+          "filnavn" : "vedlegg2.txt"
+        }
+      } ]
+    },
+    "valuePerKey" : {
+      "fil1Data" : "c71c6b93-a5b0-3abe-813c-1612082ce6f8",
+      "fil1Filnavn" : "felt.txt",
+      "fil1Format" : "text/plain",
+      "hoveddokumentFil2Data" : "ccd64847-eeb5-3d50-bd25-f3115a9d2e9a",
+      "hoveddokumentFil2Filnavn" : "hoveddokument.pdf",
+      "hoveddokumentFil2Format" : "application/pdf",
+      "hoveddokumentFilnavn" : "hoveddokument.pdf",
+      "hoveddokumentMediatype" : "application/pdf",
+      "kulturminneId" : "99",
+      "saksnummer" : "55",
+      "sokerNavn" : "Ola Nordmann"
+    }
+  },
+  "uploadedFiles" : [ {
+    "base64Contents" : "ZmVsdA==",
+    "encoding" : "UTF-8",
+    "name" : "felt.txt",
+    "sourceApplicationId" : 3,
+    "sourceApplicationInstanceId" : "12345",
+    "type" : "text/plain"
+  }, {
+    "base64Contents" : "aG92ZWQ=",
+    "encoding" : "UTF-8",
+    "name" : "hoveddokument.pdf",
+    "sourceApplicationId" : 3,
+    "sourceApplicationInstanceId" : "12345",
+    "type" : "application/pdf"
+  }, {
+    "base64Contents" : "djE=",
+    "encoding" : "UTF-8",
+    "name" : "vedlegg1.txt",
+    "sourceApplicationId" : 3,
+    "sourceApplicationInstanceId" : "12345",
+    "type" : "text/plain"
+  }, {
+    "base64Contents" : "djI=",
+    "encoding" : "UTF-8",
+    "name" : "vedlegg2.txt",
+    "sourceApplicationId" : 3,
+    "sourceApplicationInstanceId" : "12345",
+    "type" : "text/plain"
+  } ]
+}
